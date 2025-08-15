@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>تسجيل حضور / انصراف</h2>
+  <form method="post" action="{{ url_for('route_check_in') }}" class="inline-form">
+    <label for="code_in">كود الموظف</label>
+    <input type="text" id="code_in" name="code" placeholder="أدخل كود الموظف" required autofocus>
+    <button type="submit">تسجيل حضور</button>
+  </form>
+
+  <form method="post" action="{{ url_for('route_check_out') }}" class="inline-form">
+    <label for="code_out">كود الموظف</label>
+    <input type="text" id="code_out" name="code" placeholder="أدخل كود الموظف" required>
+    <button type="submit">تسجيل انصراف</button>
+  </form>
+  <p class="hint">لا يمكن تسجيل حضور جديد إذا كانت هناك جلسة مفتوحة، ويجب تسجيل انصراف أولًا.</p>
+</section>
+
+<section class="card">
+  <h3>آخر 10 عمليات</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>كود الموظف</th>
+          <th>حضور</th>
+          <th>انصراف</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in last_ops %}
+          <tr>
+            <td>{{ s['employee_code'] }}</td>
+            <td>{{ s['check_in'] }}</td>
+            <td>{{ s['check_out'] or '—' }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="3">لا توجد بيانات بعد.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
