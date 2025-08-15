@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card narrow">
+  <h2>تسجيل دخول الإدارة</h2>
+  <form method="post" class="stack-form">
+    <label for="password">كلمة السر</label>
+    <input type="password" id="password" name="password" placeholder="أدخل كلمة السر" required>
+    <button type="submit">دخول</button>
+  </form>
+  <p class="hint">افتراضيًا كلمة السر: <code>admin123</code> — غيّرها بمتغير البيئة <code>ADMIN_PASSWORD</code>.</p>
+</section>
+{% endblock %}

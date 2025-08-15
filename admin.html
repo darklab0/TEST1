@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>لوحة الإدارة</h2>
+  <div class="two-cols">
+    <div>
+      <h3>إضافة موظف</h3>
+      <form method="post" class="stack-form">
+        <input type="hidden" name="action" value="add_employee">
+        <label for="emp_code">كود الموظف</label>
+        <input type="text" id="emp_code" name="emp_code" required placeholder="مثال: 1001">
+        <label for="emp_name">اسم الموظف</label>
+        <input type="text" id="emp_name" name="emp_name" placeholder="اختياري">
+        <button type="submit">إضافة</button>
+      </form>
+      <h4>الموظفون</h4>
+      <ul class="list">
+        {% for e in employees %}
+          <li><b>{{ e['code'] }}</b> — {{ e['name'] or e['code'] }}</li>
+        {% else %}
+          <li>لا يوجد موظفون بعد.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div>
+      <h3>تقارير شهرية</h3>
+      <form method="get" class="stack-form">
+        <label for="emp_sel">اختر الموظف</label>
+        <select id="emp_sel" name="code" required>
+          <option value="">— اختر —</option>
+          {% for e in employees %}
+            <option value="{{ e['code'] }}" {% if report_data and report_data.code==e['code'] %}selected{% endif %}>{{ e['name'] or e['code'] }} ({{ e['code'] }})</option>
+          {% endfor %}
+        </select>
+        <label for="month">الشهر</label>
+        <input type="month" id="month" name="month" value="{{ selected_month }}">
+        <button type="submit">عرض التقرير</button>
+      </form>
+
+      {% if report_data %}
+      <div class="actions">
+        <a class="btn" href="{{ url_for('export_csv', code=report_data.code, month=report_data.month) }}">تحميل CSV</a>
+        <a class="btn" href="{{ url_for('export_xlsx', code=report_data.code, month=report_data.month) }}">تحميل Excel</a>
+        <a class="btn" href="{{ url_for('export_pdf', code=report_data.code, month=report_data.month) }}">تحميل PDF</a>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>اليوم</th>
+              <th># جلسة</th>
+              <th>حضور</th>
+              <th>انصراف</th>
+              <th>المدة (س:د)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in report_data.daily_rows %}
+              <tr>
+                <td>{{ r.day }}</td>
+                <td>{{ r.idx }}</td>
+                <td>{{ r.check_in }}</td>
+                <td>{{ r.check_out }}</td>
+                <td>{{ r.duration_hm }}</td>
+              </tr>
+            {% else %}
+              <tr><td colspan="5">لا توجد جلسات في هذا الشهر.</td></tr>
+            {% endif %}
+            <tr class="total">
+              <td><b>الإجمالي</b></td>
+              <td></td><td></td><td></td>
+              <td><b>{{ report_data.total_hm }}</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
